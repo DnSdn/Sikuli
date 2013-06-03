@@ -1,0 +1,105 @@
+# il faut se connecter à NOEE HOM5 avant de lancer le script et IE doit être la fenêtre juste sous celle de Sikuli
+import os
+# répertoire des fichiers
+dir = "d:/" # the folder, where your ids.txt is
+# fichier en sortie avec les numéros de compte et les mots de passe temporaire
+outputFileName = os.path.join(dir, "mdp_temporaire.csv") 
+outputFile = file(outputFileName, "w")
+# fichier en entrée avec les numéros de compte
+inputFileName = os.path.join(dir, "login_tcc.csv") 
+inputFile = open(inputFileName)
+
+#On lance un navigateur et on ouvre la page web
+openApp("c:\\Program Files\\Internet Explorer\\iexplore.exe")
+wait(Pattern("1361525382545.png").similar(0.83))
+hover(Pattern("1361525382545.png").similar(0.83).targetOffset(-126,3))
+click(Pattern("1361525382545.png").similar(0.83).targetOffset(-126,3))
+paste("http://noee-hom5-sib:8592/fins_fra/start.swe?SWECmd=Start&SWEHo=noee-hom5-sib")
+click(Pattern("1361525575705.png").similar(0.76).targetOffset(-1,0))
+wait(15)
+
+# on parcourt les numéros de compte
+for line in inputFile.readlines():
+    num_compte = line.split(";")[0]
+    type_tcc = line.split(";")[1]
+    sg ="SG"
+    axa ="AXA"
+    bnp ="BNPP"
+    federis ="FEDERIS"
+    hsbc ="HSBC"
+    print(num_compte)   
+    print(type_tcc)
+    wait(1)   
+    click(Pattern("1359380149998-1.png").similar(0.92))
+    wait(1)
+    if (type_tcc.strip() == sg.strip()):
+        click(Pattern("SG.png").similar(0.76))
+    if (type_tcc.strip() == axa.strip()):
+        click("AXA.png")
+    if (type_tcc.strip() == bnp.strip()):
+        click(Pattern("BNPP.png").similar(0.90))
+    if (type_tcc.strip() == federis.strip()):
+        click("federis.png")
+    if (type_tcc.strip() == hsbc.strip()):
+        click("HSBC.png")
+   
+    click("modifierPosition.png") 
+    
+    click(Pattern("1358950474776.png").similar(0.96))
+  
+    wait(1)    
+    # on recherche l'individu
+    wait(1)
+    click("1358950495875.png")
+    click(Pattern("1360852533938.png").similar(0.87).targetOffset(-1,1))
+    wait(1)
+    click("IcompteII.png")
+    paste(num_compte)
+    click("AheindreAr.png")
+    wait(2)
+    
+    
+        # on renseigne son email
+    hover(Pattern("Email.png").similar(0.92).targetOffset(19,0))
+    doubleClick(Pattern("Email.png").similar(0.92).targetOffset(19,0))
+    wait(1) 
+    paste("s2e.recette@s2e-net.com")
+    wait(1) 
+    # on crée une demande de service
+    click("1358952474669.png")
+    wait(2) 
+    click("1358952538457.png")
+    wait(1)    
+    click(Pattern("1360855703919.png").similar(0.84).targetOffset(28,1))
+    type("Ren")
+    wait(1)  
+    click("Soussoustype-1.png")
+    wait(1)  
+    click("Envoiparemai.png")
+    wait(1)
+    click("Valider.png")
+    wait("1358952871983.png",30)    
+    click("1358952871983.png")
+    wait(1)  
+    # on va récupérer le mot de passe temporaire
+    click("Iwlf.png")
+    wait(1)  
+    click("DetailIndivi.png")
+    wait(1) 
+    # on regarde s'il faut développer le détail
+    if not exists(Pattern("MotdePease.png").targetOffset(37,0)): 
+        if exists(Pattern("1358955571439.png").similar(0.90)): 
+            click(Pattern("1358955571439.png").similar(0.90))       
+            wait(1) 
+    # on met le mot de passe dans le presse-papier
+    doubleClick(Pattern("MotdePease.png").similar(0.92).targetOffset(37,0))
+    wait(1)
+    type('c', KeyModifier.CTRL)
+    mdp_temporaire = Env.getClipboard().strip()
+    print(num_compte + ";" + mdp_temporaire + ";" + type_tcc)
+    # on écrit le résultat dans le fichier de sortie
+    outputFile.write(num_compte + ";" + mdp_temporaire + "\n");
+    # end if exists
+inputFile.close() # close file
+outputFile.close() # close file
+wait(3)
