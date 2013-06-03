@@ -1,0 +1,84 @@
+# il faut se connecter à NOEE HOM5 avant de lancer le script et IE doit être la fenêtre juste sous celle de Sikuli
+import os, sys 
+
+# répertoire des fichiers
+dir = "d:/" # the folder, where your ids.txt is
+
+# fichier en sortie avec les numéros de compte et les mots de passe temporaire
+outputFileName = os.path.join(dir, "num_compte_pass_modifie.csv") 
+outputFile = file(outputFileName, "w")
+
+# fichier en entrée avec les numéros de compte et les mots de passe temporaire
+inputFilesName = os.path.join(dir, "mdp_temporaire.csv") 
+inputFiles = open(inputFilesName)
+
+#On lance un navigateur et on ouvre la page web
+
+openApp("c:\\Program Files\\Internet Explorer\\iexplore.exe")
+wait(Pattern("1361525382545.png").similar(0.83))
+hover(Pattern("1361525382545.png").similar(0.83).targetOffset(-126,3))
+click(Pattern("1361525382545.png").similar(0.83).targetOffset(-126,3))
+paste("http://noee-s2e-srv1:8592/ind_sge_fra/start.swe?SWECmd=Start&SWEHo=noee-s2e-srv1")
+click(Pattern("1361525575705.png").similar(0.76).targetOffset(-1,0))
+    
+
+# on parcourt les mots de passe
+
+lines = inputFiles.readlines()
+
+for line in lines:
+    print line.split(";")[0]
+    num_compte = line.split(";")[0]
+    passCpt = line.split(";")[1]
+    mdp_temporaire = line.strip()
+    print mdp_temporaire[:5:5]
+    
+    wait(Pattern("1359367766760.png").targetOffset(-20,-10))
+    click(Pattern("1359367906349.png").targetOffset(-80,9))
+    paste(num_compte)
+    
+# on prend le mot de passe temporaire stocké dans le fichier svn
+
+    hover(Pattern("1359367940644.png").targetOffset(-81,7))
+    click(Pattern("1359367940644.png").similar(0.80).targetOffset(-76,8))
+    paste(passCpt)
+    click(Pattern("1359367994000.png").similar(0.80).targetOffset(-3,-3))
+    wait(15)
+    if exists(Pattern("CGU.png").similar(0.80)) :
+        doubleClick(Pattern("cgubouton.png").similar(0.93).targetOffset(4,19))
+        doubleClick(Pattern("cgubouton.png").similar(0.93).targetOffset(4,19))
+        doubleClick(Pattern("cgubouton.png").similar(0.93).targetOffset(4,19))
+        doubleClick(Pattern("cgubouton.png").similar(0.93).targetOffset(4,19))
+        doubleClick(Pattern("cgubouton.png").similar(0.93).targetOffset(4,19))
+        find(Pattern("acceptecgu.png").similar(0.88).targetOffset(-74,17))
+        hover(Pattern("acceptecgu.png").similar(0.88).targetOffset(-74,17))
+        wait(2)
+        click(Pattern("cliqueacccgu.png").similar(0.81).targetOffset(-4,-3))
+        wait(2)
+        
+    hover(Pattern("1359368486291.png").similar(0.84).targetOffset(32,1))
+    click(Pattern("1359368486291.png").similar(0.84).targetOffset(32,1))
+    paste("648972")
+    hover(Pattern("1359368564157.png").similar(0.80).targetOffset(44,0))
+    click(Pattern("1359368564157.png").similar(0.80).targetOffset(44,-1))
+    paste("648972")
+    click(Pattern("1359368623275.png").similar(0.80).targetOffset(-3,-2))
+    wait(5)
+    print("Mot de passe changé avec succès")
+    click(Pattern("1359368660833.png").similar(0.80).targetOffset(-5,-2))
+    wait(1)
+    type('c', KeyModifier.CTRL)
+    num_compte_pass_modifie = Env.getClipboard().strip()
+    print(num_compte + ";" + "mot de passe changé")
+    # on écrit le résultat dans le fichier de sortie
+    outputFile.write(num_compte + ";" + "mot de passe changé" "\n")
+    outputFile.flush()
+    # end if exists
+inputFiles.close() # close file
+outputFile.close() # close file
+wait(3)
+    
+
+
+
+       
